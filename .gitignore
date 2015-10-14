@@ -1,3 +1,4 @@
 hack_pack/bin
 hack_pack/obj
 *.exe
+*~
