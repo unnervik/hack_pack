@@ -1,0 +1,15 @@
+hack_pack Command Line Interface. Options:
+    exit
+    load - filename.testspec
+    help - show this message
+load example.testspec
+Load testspec example.testspec ...
+Performing action test1
+    using hosts: ("192.168.0.1","192.168.0.2")
+    at ports: [8000,8001,8002,8003,8004,8005,8006,8007,8008,8009,8010]
+    with protocols: [HTTP1]
+Performing action test2
+    using hosts: ("10.0.0.2","10.0.0.10")
+    at ports: [80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,
+               99,100,101,102,103,104]
+    with protocols: [SSH,FTP]
