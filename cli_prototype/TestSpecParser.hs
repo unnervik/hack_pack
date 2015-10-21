@@ -45,13 +45,9 @@ p_array = do
     return arr
 
 p_range :: Parser (String, String)
-p_range = do
-    char '['
-    pt1 <- many1 (try alphaNum <|> char '.')
-    string "->"
-    pt2 <- many1 (try alphaNum <|> char '.')
-    char ']'
-    return (pt1, pt2)
+p_range = liftA2 (,) (char '[' *> ra <* string "->")
+                     (ra <* char ']')
+    where ra = many1 $ try alphaNum <|> char '.'
 
 p_action :: Parser Action
 p_action = do
@@ -77,9 +73,6 @@ p_action = do
 
 p_spec :: Parser [Action]
 p_spec = many p_action -- <* eof
-
-p_applicative :: Parser (String, String)
-p_applicative = (,) <$> many1 letter <*> (spaces *> many1 digit)
 
 test = parseSpec $ "#iojkijij\n" ++
                    "#kkokok\n" ++
