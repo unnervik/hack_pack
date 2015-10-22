@@ -24,31 +24,20 @@ eol :: Parser Char
 eol = char '\n'
 
 p_comment :: Parser ()
-p_comment = do
-    char '#'
-    manyTill anyChar eol
-    --many1 anyChar `endBy` (char '#')
-    return ()
+p_comment = char '#' *> manyTill anyChar eol *> pure ()
 
 p_name :: Parser String
-p_name = do
-    char '-'
-    name <- many1 alphaNum
-    char '-'
-    return name
+p_name = char '-' *> many1 alphaNum <* char '-'
 
 p_array :: Parser [String]
-p_array = do
-    char '['
-    arr <- (many alphaNum) `sepBy` char ','
-    char ']'
-    return arr
+p_array = char '[' *> (many alphaNum) `sepBy` char ',' <* char ']'
 
 p_range :: Parser (String, String)
 p_range = liftA2 (,) (char '[' *> ra <* string "->")
                      (ra <* char ']')
     where ra = many1 $ try alphaNum <|> char '.'
 
+-- Parse an action in the testspec language.
 p_action :: Parser Action
 p_action = do
     many p_comment
@@ -60,7 +49,7 @@ p_action = do
     spaces
     string "address:"
     spaces
-    (hostFrom, hostTo) <- p_range
+    hosts <- p_range
     spaces
     string "ports:"
     spaces
@@ -68,12 +57,13 @@ p_action = do
     spaces
     return $ Action name
                     (map read ptcls)
-                    (hostFrom, hostTo)
+                    hosts
                     (read portFrom, read portTo)
 
 p_spec :: Parser [Action]
-p_spec = many p_action -- <* eof
+p_spec = many p_action
 
+test :: Either ParseError [Action]
 test = parseSpec $ "#iojkijij\n" ++
                    "#kkokok\n" ++
                    "-name-\n" ++
